@@ -90,6 +90,20 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 # ...
+def get_dealer_details(request, dealer_id):
+    if request.method == "GET":
+        url = "https://ramahnore-5000.theiadocker-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        # Get dealers from the URL
+        reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
+        # Concat all dealer's short name
+        dealer_names = " ".join([dealer.name for dealer in reviews])
+        # Return a list of dealer short name
+        return render(
+            request,
+            "djangoapp/dealer_details.html",
+            {"reviews": reviews, "dealer_id": dealer_id},
+        )
+
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):

@@ -16,7 +16,6 @@ def get_request(url, **kwargs):
     # status_code = response.status_code
     # print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
-    print(json_data)
     return json_data
 
 
@@ -55,14 +54,14 @@ def get_dealers_from_cf(url, **kwargs):
 def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
     # Call get_request with a URL parameter
-    json_result = get_request(url, id=dealer_id)
+    json_result = get_request("https://ramahnore-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id=15")
+    print('json result')
     print(json_result)
     if json_result:
         dealer_reviews = json_result
-        for review in dealer_reviews:
+       """  for review in dealer_reviews:
             dealer_review = DealerReview(
-                dealership=review["dealership"],
-                name=review["name"],
+                name=review.short_name,
                 purchase=review["purchase"],
                 review=review["review"],
                 purchase_date=review["purchase_date"],
@@ -73,7 +72,7 @@ def get_dealer_reviews_from_cf(url, dealer_id):
                 id=review["id"],
             )
             dealer_review.sentiment = analyze_review_sentiments(dealer_review.review)
-            results.append(dealer_review)
+            results.append(dealer_review) """
     return results
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text

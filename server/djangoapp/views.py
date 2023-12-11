@@ -90,10 +90,12 @@ def get_dealerships(request):
 # def get_dealer_details(request, dealer_id):
 # ...
 def get_dealer_details(request, dealer_id):
+    print('getting')
     if request.method == "GET":
-        url = "https://ramahnore-5000.theiadocker-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        url = "https://ramahnore-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
         reviews = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
+        print('REVIEEEEWSSSS//////////')
         print(reviews)
         return render(
             request,

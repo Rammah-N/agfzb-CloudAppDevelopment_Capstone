@@ -10,6 +10,8 @@ from datetime import datetime
 import logging
 import json
 
+from .restapis import get_dealers_from_cf
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -76,8 +78,12 @@ def registration_request(request):
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
     if request.method == "GET":
+        context = {}
+        url = "https://ramahnore-3000.theiadocker-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        dealerships = get_dealers_from_cf(url)
+        context["dealership_list"] = dealerships
+       
         return render(request, 'djangoapp/index.html', context)
 
 

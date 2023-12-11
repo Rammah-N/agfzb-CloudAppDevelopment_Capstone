@@ -7,15 +7,16 @@ def get_request(url, **kwargs):
     print(kwargs)
     print("GET from {} ".format(url))
     try:
-        # Call get method of requests library with URL and parameters
         response = requests.get(url, headers={'Content-Type': 'application/json'},
                                     params=kwargs)
+        
     except:
         # If any error occurs
         print("Network exception occurred")
-    status_code = response.status_code
-    print("With status {} ".format(status_code))
+    # status_code = response.status_code
+    # print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
+    print(json_data)
     return json_data
 
 
@@ -55,6 +56,7 @@ def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url, id=dealer_id)
+    print(json_result)
     if json_result:
         dealer_reviews = json_result
         for review in dealer_reviews:
@@ -70,7 +72,7 @@ def get_dealer_reviews_from_cf(url, dealer_id):
                 sentiment="",
                 id=review["id"],
             )
-            # dealer_review.sentiment = analyze_review_sentiments(dealer_review.review)
+            dealer_review.sentiment = analyze_review_sentiments(dealer_review.review)
             results.append(dealer_review)
     return results
 
@@ -79,5 +81,18 @@ def get_dealer_reviews_from_cf(url, dealer_id):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
 
+def analyze_review_sentiments(dealerreview):
+    body = {"text": dealerreview, "features": {"sentiment": {"document": True}}}
+    response = requests.post(
+        watson_url + "/v1/analyze?version=2022-04-07",
+        headers={"Content-Type": "application/json"},
+        json=body,
+        auth=HTTPBasicAuth("apikey", "nMk5TABLvboHSIRh3PHqCm06bLbmw0zbIX1wUvyrPG7c"),
+    )
 
+    # Check if request was successful
+    if response.status_code == 200:
+        sentiment = response.json()["sentiment"]["document"]["label"]
+        return sentiment
+    return "N/A"
 

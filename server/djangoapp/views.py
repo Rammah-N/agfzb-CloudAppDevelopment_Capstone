@@ -2,15 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-# from .restapis import related methods
+from .models import DealerReview
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
 
-from .restapis import get_dealers_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -94,10 +93,7 @@ def get_dealer_details(request, dealer_id):
     if request.method == "GET":
         url = "https://ramahnore-5000.theiadocker-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
-        reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-        # Concat all dealer's short name
-        dealer_names = " ".join([dealer.name for dealer in reviews])
-        # Return a list of dealer short name
+        reviews = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
         return render(
             request,
             "djangoapp/dealer_details.html",

@@ -8,6 +8,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+import requests
 
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 
@@ -108,6 +109,8 @@ def get_dealer_details(request, dealer_id):
 # ...
 
 def add_review(request, dealer_id):
+    print('dealer_id here')
+    print(dealer_id)
     context = {"dealer_id": dealer_id}
 
     if request.method == "GET":
@@ -126,12 +129,17 @@ def add_review(request, dealer_id):
         }
 
         car_id = input_data.get("car")
-        car = CarModel.objects.filter(pk=car_id).first()  # Using filter().first() to avoid exceptions
+        car = CarModel.objects.filter(pk=car_id).first()
+        print('car here')
+        print(car)
+        required_fields = ['id', 'name', 'dealership', 'review', 'purchase', 'purchase_date', 'car_make', 'car_model', 'car_year']
         if car:
             review.update({
-                "car_make": car.make.name,
+                "car_make": car.car_make.name,
                 "car_model": car.name,
                 "car_year": car.year.strftime("%Y"),
+                "name": car.name,
+                "id": 10
             })
         else:
             review.update({
@@ -139,10 +147,16 @@ def add_review(request, dealer_id):
                 "car_model": "None",
                 "car_year": "None",
             })
-
-        post_review("https://ramahnore-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/post_review", {"review": review})
-
-        return HttpResponseRedirect(reverse("djangoapp:dealer_details", args=(dealer_id,)))
+        response = requests.post(
+            "https://ramahnore-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review", headers={"Content-Type": "application/json"}, json=review
+        )
+        print('post response here')
+        print(response)
+        if response.status_code == 201:
+            
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+        else:
+            print(response.content)
 
     else:
         pass

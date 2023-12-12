@@ -19,7 +19,7 @@
             </div>
             {% if user.is_authenticated %}
                 {% if dealer_id %}
-                <a class="btn btn-link" href="#">Add Review</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:add_review' dealer_id %}">Add Review</a>
                 {% endif %}
 <div class="rightalign">
        <div class="d-flex>

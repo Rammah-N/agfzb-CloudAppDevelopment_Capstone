@@ -15,18 +15,30 @@
    </script>
 </head>
 
-    <body>
+    <body class="p-5">
     <!--Add review form here -->
     <h1>Add a review about {{dealer_id}} </h1>
-    <form >
+    <form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+        {% csrf_token %}
+        <div class="mt-2 mb-2">
+        <label for="content">Enter the review content:</label>
         <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
-        <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+        </div>
+        <div class="mt-2 mb-2">
+        <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">Did you buy this car?</input>
+        </div>
+        <div class="mt-2 mb-2">
+            <label for="car">Select your car (model-make-year)</label>
         <select name="car" id="car" class="form-select" required>
             {% for car in cars %}
                 <option selected value={{car.id}}>{{car.name}}-{{car.make.name}}-{{ car.year|date:"Y" }}</option>
             {% endfor %}
        </select>
-       <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
+        </div>
+        <div class="mt-2 mb-5">
+        <label for="purchasedate">Select purchase date:</label>
+       <input class="date-own form-control" type="date" name="purchasedate" id="purchasedate">
+        </div>
        <button class="btn btn-primary">Submit</button>
     </form>
 

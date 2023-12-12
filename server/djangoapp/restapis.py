@@ -42,6 +42,7 @@ def get_dealers_from_cf(url, **kwargs):
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                    short_name=dealer_doc["short_name"],
                                    st=dealer_doc["st"], zip=dealer_doc["zip"])
+            
             results.append(dealer_obj)
     print(results)
     return results
@@ -52,16 +53,16 @@ def get_dealers_from_cf(url, **kwargs):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
 def get_dealer_reviews_from_cf(url, dealer_id):
-    results = []
+    dealer_reviews = []
     # Call get_request with a URL parameter
-    json_result = get_request("https://ramahnore-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id=15")
-    print('json result')
-    print(json_result)
+    json_result = get_request("https://ramahnore-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews", id=dealer_id)
     if json_result:
-        dealer_reviews = json_result
-       """  for review in dealer_reviews:
+        reviews = json_result
+        print(reviews)
+        for review in reviews:
             dealer_review = DealerReview(
-                name=review.short_name,
+                dealership=review["dealership"],
+                name=review["name"],
                 purchase=review["purchase"],
                 review=review["review"],
                 purchase_date=review["purchase_date"],
@@ -72,8 +73,9 @@ def get_dealer_reviews_from_cf(url, dealer_id):
                 id=review["id"],
             )
             dealer_review.sentiment = analyze_review_sentiments(dealer_review.review)
-            results.append(dealer_review) """
-    return results
+            dealer_reviews.append(dealer_review)
+       
+    return dealer_reviews
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 # def analyze_review_sentiments(text):
@@ -82,16 +84,18 @@ def get_dealer_reviews_from_cf(url, dealer_id):
 
 def analyze_review_sentiments(dealerreview):
     body = {"text": dealerreview, "features": {"sentiment": {"document": True}}}
-    response = requests.post(
-        watson_url + "/v1/analyze?version=2022-04-07",
-        headers={"Content-Type": "application/json"},
-        json=body,
-        auth=HTTPBasicAuth("apikey", "nMk5TABLvboHSIRh3PHqCm06bLbmw0zbIX1wUvyrPG7c"),
-    )
-
-    # Check if request was successful
-    if response.status_code == 200:
-        sentiment = response.json()["sentiment"]["document"]["label"]
-        return sentiment
-    return "N/A"
+    try:
+        response = requests.post(
+            url ="https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/7915b459-2bce-423a-8092-90cb059852b5/v1/analyze?version=2022-04-07",
+            headers={"Content-Type": "application/json"},
+            json=body,
+            auth=HTTPBasicAuth("apikey", "nMk5TABLvboHSIRh3PHqCm06bLbmw0zbIX1wUvyrPG7c"),
+        )
+        if response.status_code == 200:
+            sentiment = response.json()["sentiment"]["document"]["label"]
+            return sentiment
+        else:
+            return f"Error: Status code {response.status_code}, {response.text}"
+    except Exception as e:
+        return f"Exception occurred: {str(e)}"
 

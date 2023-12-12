@@ -18,6 +18,12 @@
                   <a class="navbar-brand" href="contact">Contact</a>
             </div>
             {% if user.is_authenticated %}
+            {% if dealer_id %}
+            <a
+              class="btn btn-link"
+              >Add Review</a
+            >
+            {% endif %}
 <div class="rightalign">
        <div class="d-flex>
            <button class="btn btn-link mr-2">{{user.username}}</button>
@@ -39,19 +45,20 @@
         <div>
             {% endif %}
     </nav>
+    <h3>Dealer ID: {{ dealer_id }}</h1>
     <!-- Add reviews as cards -->
     <div class="card-columns">
         {% for review in reviews %}
   
         <div class="card">
           {% if review.sentiment == "positive"%}
-          <img class="card-img-left" src="{{MEDIA_URL}}emoji/positive.png" />
+          <img class="card-img-left" style="width:50px;" src="{{MEDIA_URL}}emoji/positive.png" />
           {% elif review.sentiment == "neutral" %}
-          <img class="card-img-left" src="{{MEDIA_URL}}emoji/neutral.png" />
+          <img class="card-img-left" style="width:50px;" src="{{MEDIA_URL}}emoji/neutral.png" />
           {% elif review.sentiment == "negative" %}
-          <img class="card-img-left" src="{{MEDIA_URL}}emoji/negative.png" />
+          <img class="card-img-left" style="width:50px;" src="{{MEDIA_URL}}emoji/negative.png" />
           {%else %}
-          <img class="card-img-left" src="{{MEDIA_URL}}emoji/neutral.png" />
+          <img class="card-img-left" style="width:50px;" src="{{MEDIA_URL}}emoji/neutral.png" />
           {% endif %}
   
           <div class="card-body">

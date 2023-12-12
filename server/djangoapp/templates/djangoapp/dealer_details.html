@@ -18,12 +18,9 @@
                   <a class="navbar-brand" href="contact">Contact</a>
             </div>
             {% if user.is_authenticated %}
-            {% if dealer_id %}
-            <a
-              class="btn btn-link"
-              >Add Review</a
-            >
-            {% endif %}
+                {% if dealer_id %}
+                <a class="btn btn-link" href="#">Add Review</a>
+                {% endif %}
 <div class="rightalign">
        <div class="d-flex>
            <button class="btn btn-link mr-2">{{user.username}}</button>

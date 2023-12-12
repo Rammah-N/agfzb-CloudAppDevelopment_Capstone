@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import DealerReview
+from .models import DealerReview, CarModel
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -106,4 +106,46 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
+
+def add_review(request, dealer_id):
+    context = {"dealer_id": dealer_id}
+
+    if request.method == "GET":
+        context["cars"] = CarModel.objects.all()
+        print('context here')
+        print(context['cars'])
+        return render(request, "djangoapp/add_review.html", context)
+
+    elif request.method == "POST":
+        input_data = request.POST
+        review = {
+            "dealership": int(dealer_id),
+            "review": input_data.get("content", ""),
+            "purchase": input_data.get("purchasecheck", False) == 'on',
+            "purchase_date": input_data.get("purchasedate", ""),
+        }
+
+        car_id = input_data.get("car")
+        car = CarModel.objects.filter(pk=car_id).first()  # Using filter().first() to avoid exceptions
+        if car:
+            review.update({
+                "car_make": car.make.name,
+                "car_model": car.name,
+                "car_year": car.year.strftime("%Y"),
+            })
+        else:
+            review.update({
+                "car_make": "None",
+                "car_model": "None",
+                "car_year": "None",
+            })
+
+        post_review("https://ramahnore-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/post_review", {"review": review})
+
+        return HttpResponseRedirect(reverse("djangoapp:dealer_details", args=(dealer_id,)))
+
+    else:
+        pass
+
+    return render(request, "djangoapp/add_review.html", context)
 

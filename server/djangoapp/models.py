@@ -40,13 +40,13 @@ class CarModel(models.Model):
         (SUV, "SUV"),
         (SEDAN, "Sedan"),
     ]
-    car_type = models.CharField(
+    carType = models.CharField(
         null=False, max_length=5, choices=car_types, default=SEDAN
     )
     year = models.DateField(null=True)
 
     def __str__(self):
-        return self.name + ', ' + self.year + ', ' + self.car_type
+        return self.name + ', ' + self.year + ', ' + self.carType
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
 class CarDealer:

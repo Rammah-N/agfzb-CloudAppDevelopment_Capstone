@@ -16,7 +16,7 @@ class CarModelAdmin(admin.ModelAdmin):
         "name",
         "dealer_id",
         "make",
-        "car_type",
+        "carType",
     ]
 
 # CarMakeAdmin class with CarModelInline
